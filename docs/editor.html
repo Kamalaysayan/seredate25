@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor - KAMALAYSAYAN</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Ensure this path is correct -->
+    <link rel="stylesheet" href="styles.css">
     <style>
         .black-container {
             background-color: black;
@@ -16,6 +16,9 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
+        }
+        .black-container img {
+            width: 100px;
         }
     </style>
 </head>
@@ -30,39 +33,26 @@
 
     <script>
         function openAddImage() {
-            window.location.href = 'add-image.html'; // Remove leading slash
+            window.location.href = 'add-image.html'; // Ensure this path is correct
         }
 
         async function fetchImages() {
-            const response = await fetch('images'); // Remove leading slash
+            const response = await fetch('images'); // Ensure this path is correct
             const images = await response.json();
             const imageList = document.getElementById('imageList');
             
             images.forEach(image => {
                 const container = document.createElement('div');
                 container.className = 'black-container';
-                container.onclick = () => window.location.href = `image-page-${image.id}.html`; // Remove leading slash
+                container.onclick = () => window.location.href = `image-page-${image.id}.html`; // Navigate to unique URL
 
                 const img = document.createElement('img');
                 img.src = image.url;
-                img.width = 100;
-
-                const doneButton = document.createElement('button');
-                doneButton.className = 'button';
-                doneButton.textContent = 'Done';
-                doneButton.onclick = (event) => {
-                    event.stopPropagation();
-                    markAsDone(image.id);
-                };
+                img.alt = 'Uploaded Image';
 
                 container.appendChild(img);
-                container.appendChild(doneButton);
                 imageList.appendChild(container);
             });
-        }
-
-        function markAsDone(imageId) {
-            alert(`Image ${imageId} marked as done.`);
         }
 
         fetchImages();

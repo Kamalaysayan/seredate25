@@ -12,7 +12,7 @@ let images = [];
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/uploads');
+        cb(null, 'docs/uploads');
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname));
@@ -20,8 +20,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files from the docs directory
+app.use(express.static(path.join(__dirname, 'docs')));
 
 // API endpoint for handling image upload
 app.post('/upload', upload.single('image'), (req, res) => {
@@ -68,7 +68,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     `;
 
     // Save the new HTML file
-    fs.writeFileSync(`public/image-page-${imageId}.html`, imagePageContent);
+    fs.writeFileSync(`docs/image-page-${imageId}.html`, imagePageContent);
 
     res.send({ message: 'Image uploaded successfully!', filePath: imageUrl });
 });
