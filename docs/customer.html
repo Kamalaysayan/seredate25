@@ -1,13 +1,25 @@
-function navigateToEditor() {
-    const password = prompt('Enter password:');
-    if (password === 'Kamalaysayan@2025') {
-        window.location.href = 'editor.html';
-    } else {
-        alert('Incorrect password');
-    }
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer - KAMALAYSAYAN</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>KAMALAYSAYAN</h1>
+        <div class="image-container">
+            <img src="placeholder.jpg" alt="Customer Image" id="customerImage" width="500">
+            <button class="download-button" onclick="downloadImage()">Download Image</button>
+        </div>
+        <button class="qr-button" onclick="generateQRCode()">Generate QR Code</button>
+        <div id="qrCodeContainer" style="display: none;">
+            <canvas id="qrCode"></canvas>
+        </div>
+    </div>
 
-function navigateToCustomer() {
-    // Implement QR reader access here
-    window.location.href = 'customer.html';
-}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>
