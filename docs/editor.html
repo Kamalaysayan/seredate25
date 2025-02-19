@@ -1,24 +1,71 @@
-body {
-    background-color: #fdeef4;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-.container {
-    text-align: center;
-}
-.button {
-    background-color: #ff69b4;
-    color: white;
-    padding: 15px 30px;
-    margin: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-}
-.button:hover {
-    background-color: #ff1493;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor - KAMALAYSAYAN</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Ensure this path is correct -->
+    <style>
+        .black-container {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            margin: 10px;
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>KAMALAYSAYAN Editor</h1>
+        <div id="imageList" class="image-list">
+            <!-- Dynamically generated image containers will go here -->
+        </div>
+        <button class="button" onclick="openAddImage()">Add Image</button>
+    </div>
+
+    <script>
+        function openAddImage() {
+            window.location.href = 'add-image.html'; // Remove leading slash
+        }
+
+        async function fetchImages() {
+            const response = await fetch('images'); // Remove leading slash
+            const images = await response.json();
+            const imageList = document.getElementById('imageList');
+            
+            images.forEach(image => {
+                const container = document.createElement('div');
+                container.className = 'black-container';
+                container.onclick = () => window.location.href = `image-page-${image.id}.html`; // Remove leading slash
+
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.width = 100;
+
+                const doneButton = document.createElement('button');
+                doneButton.className = 'button';
+                doneButton.textContent = 'Done';
+                doneButton.onclick = (event) => {
+                    event.stopPropagation();
+                    markAsDone(image.id);
+                };
+
+                container.appendChild(img);
+                container.appendChild(doneButton);
+                imageList.appendChild(container);
+            });
+        }
+
+        function markAsDone(imageId) {
+            alert(`Image ${imageId} marked as done.`);
+        }
+
+        fetchImages();
+    </script>
+</body>
+</html>
