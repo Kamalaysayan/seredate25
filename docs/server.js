@@ -3,6 +3,7 @@ const path = require('path');
 const multer = require('multer');
 const QRCode = require('qrcode');
 const fs = require('fs');
+
 const app = express();
 const port = 3000;
 
@@ -12,10 +13,10 @@ let images = [];
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'docs/uploads');
+        cb(null, 'docs/uploads'); // Ensure this path is correct
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
+        cb(null, Date.now() + path.extname(file.originalname)); // Generate a unique filename using timestamp
     }
 });
 const upload = multer({ storage: storage });
