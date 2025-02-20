@@ -13,17 +13,16 @@ let images = [];
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'docs/uploads'); // Ensure this path is correct
+        cb(null, 'docs/uploads');
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); // Generate a unique filename using timestamp
+        cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 const upload = multer({ storage: storage });
 
 // Serve static files from the docs directory
 app.use(express.static(path.join(__dirname, 'docs')));
-app.use('/uploads', express.static(path.join(__dirname, 'docs/uploads'))); // Serve uploaded images
 
 // API endpoint for handling image upload
 app.post('/upload', upload.single('image'), (req, res) => {
@@ -45,9 +44,10 @@ app.post('/upload', upload.single('image'), (req, res) => {
             <div class="container">
                 <h1>KAMALAYSAYAN</h1>
                 <div class="image-container">
-                    <img src="${imageUrl}" alt="Customer Image" id="customerImage" width="500">
+                    <img src="${imageUrl}" alt="Customer Image" id="customerImage" width="100%">
                 </div>
                 <button class="qr-button" onclick="generateQRCode()">Generate QR Code</button>
+                <button class="download-button" onclick="downloadImage()">Download Image</button>
                 <div id="qrCodeContainer" style="display: none;">
                     <canvas id="qrCode"></canvas>
                 </div>
@@ -64,8 +64,41 @@ app.post('/upload', upload.single('image'), (req, res) => {
                     });
                     document.getElementById('qrCodeContainer').style.display = 'block';
                 }
+
+                function downloadImage() {
+                    const link = document.createElement('a');
+                    link.href = document.getElementById('customerImage').src;
+                    link.download = 'image.jpg';
+                    link.click();
+                }
             </script>
         </body>
         </html>
     `;
 
+    // Save the new HTML file
+    fs.writeFileSync(`docs/image-page-${imageId}.html`, imagePageContent);
+
+    res.send({ message: 'Image uploaded successfully!', filePath: imageUrl });
+});
+
+// API endpoint for fetching images
+app.get('/images', (req, res) => {
+    res.json(images);
+});
+
+// API endpoint for generating QR code
+app.get('/generate-qr', (req, res) => {
+    const url = req.query.url;
+    QRCode.toDataURL(url, (err, qrUrl) => {
+        if (err) {
+            res.status(500).send('Error generating QR code');
+        } else {
+            res.send({ qrUrl: qrUrl });
+        }
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});

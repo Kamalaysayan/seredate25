@@ -6,56 +6,96 @@
     <title>Editor - KAMALAYSAYAN</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .black-container {
-            background-color: black;
-            color: white;
-            padding: 10px;
-            margin: 10px;
-            width: 20%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            flex-direction: column;
-        }
-        .black-container img {
-            width: 100%;
-        }
         .white-container {
             background-color: white;
-            color: black;
             padding: 20px;
-            margin: 10px;
+            border: 2px solid black;
             width: 80%;
-            display: none; /* Hide initially */
-            flex-direction: column;
+            margin: 0 auto;
+        }
+        .pink-container {
+            background-color: pink;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
             align-items: center;
+            cursor: pointer;
         }
-        .white-container img {
+        .pink-container img {
             width: 100px;
-            margin-bottom: 10px;
-        }
-        .white-container button {
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>KAMALAYSAYAN Editor</h1>
+        <button class="button" onclick="openAddImage()">Add Image</button>
+        <div id="whiteContainer" class="white-container" style="display: none;">
+            <input type="file" id="fileInput">
+            <button class="button" onclick="uploadImage()">Upload File</button>
+            <div id="uploadedImageContainer" style="display: none;">
+                <img id="uploadedImage" src="" width="100%">
+                <button class="button" onclick="markAsDone()">Done</button>
+            </div>
+        </div>
         <div id="imageList" class="image-list">
             <!-- Dynamically generated image containers will go here -->
         </div>
-        <button class="button" onclick="openAddImage()">Add Image</button>
     </div>
 
-    <div id="uploadContainer" class="white-container">
-        <h2>Upload Image</h2>
-        <input type="file" id="imageUpload" accept="image/*" onchange="previewImage()">
-        <button onclick="doneUploading()">Done</button>
-        <img id="preview" src="" alt="Image Preview" style="display:none;">
-    </div>
+    <script>
+        function openAddImage() {
+            document.getElementById('whiteContainer').style.display = 'block';
+        }
 
-    <script src="scripts.js"></script>
+        async function uploadImage() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('uploadedImage').src = result.filePath;
+                    document.getElementById('uploadedImageContainer').style.display = 'block';
+                } else {
+                    alert('Failed to upload image.');
+                }
+            } else {
+                alert('Please select a file.');
+            }
+        }
+
+        function markAsDone() {
+            window.location.href = 'editor.html';
+        }
+
+        async function fetchImages() {
+            const response = await fetch('/images');
+            const images = await response.json();
+            const imageList = document.getElementById('imageList');
+            
+            images.forEach(image => {
+                const container = document.createElement('div');
+                container.className = 'pink-container';
+                container.onclick = () => window.location.href = `image-page-${image.id}.html`;
+
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.alt = 'Uploaded Image';
+
+                container.appendChild(img);
+                imageList.appendChild(container);
+            });
+        }
+
+        fetchImages();
+    </script>
 </body>
 </html>

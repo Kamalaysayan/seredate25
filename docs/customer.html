@@ -23,10 +23,10 @@
             let scanning = false;
 
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(function(stream) {
-                video.srcObject = stream;
-                video.setAttribute('playsinline', true); // required to tell iOS safari we don't want fullscreen
-                video.play();
                 scanning = true;
+                video.setAttribute('playsinline', true); // required to tell iOS safari we don't want fullscreen
+                video.srcObject = stream;
+                video.play();
                 requestAnimationFrame(tick);
             });
 
@@ -37,23 +37,3 @@
                     canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
                     const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
                     const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                        inversionAttempts: "dontInvert",
-                    });
-                    if (code) {
-                        alert(`QR Code detected: ${code.data}`);
-                        video.srcObject.getTracks().forEach(track => track.stop());
-                        scanning = false;
-                    }
-                }
-                if (scanning) {
-                    requestAnimationFrame(tick);
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            startQrCodeReader();
-        });
-    </script>
-</body>
-</html>
