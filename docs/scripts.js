@@ -36,7 +36,37 @@ async function handleFileSelect(event) {
     }
 }
 
-function markAsDone() {
+async function markAsDone() {
+    const response = await fetch('/images');
+    const images = await response.json();
+    const imageList = document.getElementById('imageList');
+    imageList.innerHTML = '';
+    
+    images.forEach(image => {
+        const container = document.createElement('div');
+        container.className = 'pink-container';
+        container.onclick = () => window.location.href = `image-page-${image.id}.html`;
+
+        const img = document.createElement('img');
+        img.src = image.url;
+        img.alt = 'Uploaded Image';
+
+        container.appendChild(img);
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-button';
+        deleteBtn.innerHTML = 'Delete';
+        deleteBtn.onclick = async (event) => {
+            event.stopPropagation();
+            await deleteImage(image.id);
+            container.remove();
+        };
+
+        container.appendChild(deleteBtn);
+
+        imageList.insertBefore(container, document.getElementById('addImageContainer'));
+    });
+
     window.location.href = 'editor.html';
 }
 
@@ -44,6 +74,7 @@ async function fetchImages() {
     const response = await fetch('/images');
     const images = await response.json();
     const imageList = document.getElementById('imageList');
+    imageList.innerHTML = '';
     
     images.forEach(image => {
         const container = document.createElement('div');
@@ -92,4 +123,30 @@ function startQrCodeReader() {
     function tick() {
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
             canvasElement.height = video.videoHeight;
-            canvasElement.width = video
+            canvasElement.width = video.videoWidth;
+            canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+            const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: "dontInvert",
+            });
+            if (code) {
+                alert(`QR Code detected: ${code.data}`);
+                video.srcObject.getTracks().forEach(track => track.stop());
+                scanning = false;
+            }
+        }
+        if (scanning) {
+            requestAnimationFrame(tick);
+        }
+    }
+}
+
+if (window.location.pathname.endsWith('editor.html')) {
+    fetchImages();
+}
+
+if (window.location.pathname.endsWith('customer.html')) {
+    document.addEventListener('DOMContentLoaded', (event) => {
+        startQrCodeReader();
+    });
+}
