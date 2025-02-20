@@ -5,13 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAMALAYSAYAN</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Styles for centering and button layout */
+        .container {
+            display: flex;
+            flex-direction: column; /* Arrange items vertically */
+            align-items: center; /* Center horizontally */
+            justify-content: center; /* Center vertically */
+            height: 100vh; /* Make container full viewport height */
+        }
+
+        .logo-container {
+            margin-bottom: 20px; /* Space between logo and text */
+        }
+
+        .title-container {
+            margin-bottom: 30px; /* Space between text and buttons */
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 20px; /* Space between buttons */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>KAMALAYSAYAN</h1>
-        <img src="kamalaysayan.jpg" alt="Kamalaysayan Logo">
-        <button class="button" onclick="navigateToEditor()">Editor</button>
-        <button class="button" onclick="navigateToCustomer()">Customer</button>
+        <div class="logo-container">
+            <img src="kamalaysayan.jpg" alt="Kamalaysayan Logo">
+        </div>
+        <div class="title-container">
+            <h1>KAMALAYSAYAN</h1>
+        </div>
+        <div class="button-container">
+            <button class="button" onclick="navigateToEditor()">Editor</button>
+            <button class="button" onclick="navigateToCustomer()">Customer</button>
+        </div>
     </div>
     <script src="scripts.js"></script>
 </body>
