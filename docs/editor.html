@@ -20,6 +20,30 @@
         .black-container img {
             width: 100px;
         }
+        /* Add styles for white container */
+        .white-container {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            display: none; /* Initially hidden */
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid black;
+        }
+        .white-container img {
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        .done-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -30,10 +54,34 @@
         </div>
         <button class="button" onclick="openAddImage()">Add Image</button>
     </div>
+    
+    <!-- White container for uploading image -->
+    <div id="uploadContainer" class="white-container">
+        <h2>Upload Image</h2>
+        <input type="file" id="imageInput" accept="image/*">
+        <div id="previewContainer"></div>
+        <button class="done-button" onclick="closeAddImage()">Done</button>
+    </div>
 
     <script>
         function openAddImage() {
-            window.location.href = 'add-image.html'; // Ensure this path is correct
+            document.getElementById('uploadContainer').style.display = 'flex';
+        }
+
+        function closeAddImage() {
+            document.getElementById('uploadContainer').style.display = 'none';
+            const imageInput = document.getElementById('imageInput');
+            const previewContainer = document.getElementById('previewContainer');
+            const file = imageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewContainer.appendChild(img);
+                }
+                reader.readAsDataURL(file);
+            }
         }
 
         async function fetchImages() {
