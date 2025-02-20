@@ -43,14 +43,11 @@
             <input type="file" id="fileInput">
             <div id="uploadedImageContainer" style="display: none;">
                 <img id="uploadedImage" src="" width="100%">
-                <button class="button" onclick="markAsDone()">Done</button>
+                <button id="doneButton" class="button" onclick="markAsDone()" style="display: none;">Done</button>
             </div>
         </div>
         <div id="imageList" class="image-list">
             <!-- Dynamically generated image containers will go here -->
-            <div id="addImageContainer" class="pink-container">
-                <button class="button" onclick="openAddImage()">Add Image</button>
-            </div>
         </div>
     </div>
 

@@ -30,6 +30,7 @@ async function handleFileSelect(event) {
         if (response.ok) {
             document.getElementById('uploadedImage').src = result.filePath;
             document.getElementById('uploadedImageContainer').style.display = 'block';
+            document.getElementById('doneButton').style.display = 'block';
         } else {
             alert('Failed to upload image.');
         }
@@ -37,36 +38,6 @@ async function handleFileSelect(event) {
 }
 
 async function markAsDone() {
-    const response = await fetch('/images');
-    const images = await response.json();
-    const imageList = document.getElementById('imageList');
-    imageList.innerHTML = '';
-    
-    images.forEach(image => {
-        const container = document.createElement('div');
-        container.className = 'pink-container';
-        container.onclick = () => window.location.href = `image-page-${image.id}.html`;
-
-        const img = document.createElement('img');
-        img.src = image.url;
-        img.alt = 'Uploaded Image';
-
-        container.appendChild(img);
-        
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-button';
-        deleteBtn.innerHTML = 'Delete';
-        deleteBtn.onclick = async (event) => {
-            event.stopPropagation();
-            await deleteImage(image.id);
-            container.remove();
-        };
-
-        container.appendChild(deleteBtn);
-
-        imageList.insertBefore(container, document.getElementById('addImageContainer'));
-    });
-
     window.location.href = 'editor.html';
 }
 
@@ -75,7 +46,7 @@ async function fetchImages() {
     const images = await response.json();
     const imageList = document.getElementById('imageList');
     imageList.innerHTML = '';
-    
+
     images.forEach(image => {
         const container = document.createElement('div');
         container.className = 'pink-container';
@@ -98,8 +69,10 @@ async function fetchImages() {
 
         container.appendChild(deleteBtn);
 
-        imageList.insertBefore(container, document.getElementById('addImageContainer'));
+        imageList.appendChild(container);
     });
+
+    imageList.insertBefore(document.getElementById('addImageContainer'), imageList.firstChild);
 }
 
 async function deleteImage(imageId) {
