@@ -5,6 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KAMALAYSAYAN</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .black-container {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            margin: 10px;
+            width: 20%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            flex-direction: column;
+        }
+        .black-container img {
+            width: 100%;
+        }
+        .white-container {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            margin: 10px;
+            width: 80%;
+            display: none; /* Hide initially */
+            flex-direction: column;
+            align-items: center;
+        }
+        .white-container img {
+            width: 100px;
+            margin-bottom: 10px;
+        }
+        .white-container button {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -13,6 +47,95 @@
         <button class="button" onclick="navigateToEditor()">Editor</button>
         <button class="button" onclick="navigateToCustomer()">Customer</button>
     </div>
-    <script src="scripts.js"></script>
+
+    <div class="editor-container" id="editorContainer" style="display: none;">
+        <h1>KAMALAYSAYAN Editor</h1>
+        <div id="imageList" class="image-list">
+            <!-- Dynamically generated image containers will go here -->
+        </div>
+        <button class="button" onclick="openAddImage()">Add Image</button>
+        <div id="uploadContainer" class="white-container">
+            <h2>Upload Image</h2>
+            <input type="file" id="imageUpload" accept="image/*" onchange="previewImage()">
+            <button onclick="doneUploading()">Done</button>
+            <img id="preview" src="" alt="Image Preview" style="display:none;">
+        </div>
+    </div>
+
+    <script>
+        function navigateToEditor() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('editorContainer').style.display = 'block';
+        }
+
+        function navigateToCustomer() {
+            // Add your customer page navigation logic here
+        }
+
+        function openAddImage() {
+            document.getElementById('uploadContainer').style.display = 'flex';
+        }
+
+        function previewImage() {
+            const imageUpload = document.getElementById('imageUpload');
+            const preview = document.getElementById('preview');
+            if (imageUpload.files.length > 0) {
+                const file = imageUpload.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function doneUploading() {
+            const imageUpload = document.getElementById('imageUpload');
+            if (imageUpload.files.length > 0) {
+                const file = imageUpload.files[0];
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                images.push({ url: result.url });
+                updateBlackContainers();
+                document.getElementById('uploadContainer').style.display = 'none';
+            }
+        }
+
+        let images = [];
+
+        function updateBlackContainers() {
+            const imageList = document.getElementById('imageList');
+            imageList.innerHTML = ''; // Clear current containers
+            images.forEach((image, index) => {
+                const container = document.createElement('div');
+                container.className = 'black-container';
+                container.onclick = () => window.location.href = `image-page-${index}.html`; // Navigate to unique URL
+
+                const img = document.createElement('img');
+                img.src = image.url;
+                img.alt = 'Uploaded Image';
+
+                container.appendChild(img);
+                imageList.appendChild(container);
+            });
+        }
+
+        async function fetchImages() {
+            const response = await fetch('/images');
+            const fetchedImages = await response.json();
+            images = fetchedImages;
+            updateBlackContainers();
+        }
+
+        fetchImages();
+    </script>
 </body>
 </html>
