@@ -23,6 +23,7 @@ const upload = multer({ storage: storage });
 
 // Serve static files from the docs directory
 app.use(express.static(path.join(__dirname, 'docs')));
+app.use('/uploads', express.static(path.join(__dirname, 'docs/uploads'))); // Serve uploaded images
 
 // API endpoint for handling image upload
 app.post('/upload', upload.single('image'), (req, res) => {
@@ -68,29 +69,3 @@ app.post('/upload', upload.single('image'), (req, res) => {
         </html>
     `;
 
-    // Save the new HTML file
-    fs.writeFileSync(`docs/image-page-${imageId}.html`, imagePageContent);
-
-    res.send({ message: 'Image uploaded successfully!', filePath: imageUrl });
-});
-
-// API endpoint for fetching images
-app.get('/images', (req, res) => {
-    res.json(images);
-});
-
-// API endpoint for generating QR code
-app.get('/generate-qr', (req, res) => {
-    const url = req.query.url;
-    QRCode.toDataURL(url, (err, qrUrl) => {
-        if (err) {
-            res.status(500).send('Error generating QR code');
-        } else {
-            res.send({ qrUrl: qrUrl });
-        }
-    });
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
