@@ -6,12 +6,25 @@
     <title>Editor - KAMALAYSAYAN</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .white-container {
+        /* ... (existing styles from your styles.css file) ... */
+        #whiteContainer {
             background-color: white;
             padding: 20px;
             border: 2px solid black;
             width: 80%;
             margin: 0 auto;
+            display: none; /* Initially hidden */
+        }
+        #uploadedImage {
+            max-width: 100%; /* Image should not overflow container */
+            height: auto;
+        }
+
+        .image-list {
+            display: flex; /* Use flexbox for layout */
+            flex-wrap: wrap; /* Allow wrapping to new lines */
+            justify-content: center; /* Center the images */
+            gap: 10px; /* Space between images */
         }
         .pink-container {
             background-color: pink;
@@ -22,6 +35,8 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
+            flex: 0 0 calc(33.33% - 20px); /* Adjust width for 3 images per row (example) */
+            box-sizing: border-box; /* Include padding/border in width */
         }
         .pink-container img {
             width: 100px;
@@ -33,24 +48,25 @@
             padding: 5px 10px;
             cursor: pointer;
         }
+
     </style>
 </head>
 <body>
     <div class="container">
         <h1>KAMALAYSAYAN Editor</h1>
         <button class="button" onclick="openAddImage()">Add Image</button>
-        <div id="whiteContainer" class="white-container" style="display: none;">
-            <input type="file" id="fileInput">
+
+        <div id="whiteContainer" class="white-container">
+            <input type="file" id="fileInput" accept="image/*">
             <div id="uploadedImageContainer" style="display: none;">
-                <img id="uploadedImage" src="" width="100%">
-                <button id="doneButton" class="button" onclick="markAsDone()" style="display: none;">Done</button>
+                <img id="uploadedImage" src="" alt="Uploaded Image">
+                <button id="doneButton" class="button" onclick="markAsDone()">Done</button>
             </div>
         </div>
-        <div id="imageList" class="image-list">
-            <!-- Dynamically generated image containers will go here -->
-        </div>
-    </div>
 
+        <div id="imageList" class="image-list">
+            </div>
+    </div>
     <script src="scripts.js"></script>
 </body>
 </html>

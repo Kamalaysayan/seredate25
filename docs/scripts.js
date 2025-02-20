@@ -1,14 +1,9 @@
 async function navigateToEditor() {
-    const password = prompt('Enter password:');
-    if (password === 'Kamalaysayan@2025') {
-        window.location.href = 'editor.html';
-    } else {
-        alert('Incorrect password');
-    }
+    // ... (Your existing password check)
 }
 
 function navigateToCustomer() {
-    window.location.href = 'customer.html';
+    // ... (Your existing code)
 }
 
 function openAddImage() {
@@ -19,6 +14,22 @@ function openAddImage() {
 async function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            document.getElementById('uploadedImage').src = e.target.result;
+            document.getElementById('uploadedImageContainer').style.display = 'block';
+        }
+
+        reader.readAsDataURL(file); // Display image preview immediately
+    }
+}
+
+async function markAsDone() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+
+    if(file){
         const formData = new FormData();
         formData.append('image', file);
 
@@ -26,26 +37,25 @@ async function handleFileSelect(event) {
             method: 'POST',
             body: formData
         });
-        const result = await response.json();
+
         if (response.ok) {
-            document.getElementById('uploadedImage').src = result.filePath;
-            document.getElementById('uploadedImageContainer').style.display = 'block';
-            document.getElementById('doneButton').style.display = 'block';
+            document.getElementById('whiteContainer').style.display = 'none'; //hide the upload container again
+            document.getElementById('uploadedImageContainer').style.display = 'none'; //hide the image preview
+            document.getElementById('fileInput').value = ''; //clear the input
+            fetchImages(); // Refresh image list
         } else {
             alert('Failed to upload image.');
         }
+    } else {
+        alert('Please select an image first.');
     }
-}
-
-async function markAsDone() {
-    window.location.href = 'editor.html';
 }
 
 async function fetchImages() {
     const response = await fetch('/images');
     const images = await response.json();
     const imageList = document.getElementById('imageList');
-    imageList.innerHTML = '';
+    imageList.innerHTML = ''; // Clear existing images
 
     images.forEach(image => {
         const container = document.createElement('div');
@@ -57,7 +67,7 @@ async function fetchImages() {
         img.alt = 'Uploaded Image';
 
         container.appendChild(img);
-        
+
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-button';
         deleteBtn.innerHTML = 'Delete';
@@ -72,7 +82,7 @@ async function fetchImages() {
         imageList.appendChild(container);
     });
 
-    imageList.insertBefore(document.getElementById('addImageContainer'), imageList.firstChild);
+    // imageList.insertBefore(document.getElementById('addImageContainer'), imageList.firstChild);
 }
 
 async function deleteImage(imageId) {
@@ -80,46 +90,13 @@ async function deleteImage(imageId) {
 }
 
 function startQrCodeReader() {
-    const video = document.getElementById('preview');
-    const canvasElement = document.createElement('canvas');
-    const canvas = canvasElement.getContext('2d');
-    let scanning = false;
-
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(function(stream) {
-        scanning = true;
-        video.setAttribute('playsinline', true); // required to tell iOS safari we don't want fullscreen
-        video.srcObject = stream;
-        video.play();
-        requestAnimationFrame(tick);
-    });
-
-    function tick() {
-        if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            canvasElement.height = video.videoHeight;
-            canvasElement.width = video.videoWidth;
-            canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-            const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-            const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                inversionAttempts: "dontInvert",
-            });
-            if (code) {
-                alert(`QR Code detected: ${code.data}`);
-                video.srcObject.getTracks().forEach(track => track.stop());
-                scanning = false;
-            }
-        }
-        if (scanning) {
-            requestAnimationFrame(tick);
-        }
-    }
+    // ... (Your existing QR code reader code)
 }
 
 if (window.location.pathname.endsWith('editor.html')) {
-    fetchImages();
+    fetchImages(); // Call fetchImages when editor.html loads
 }
 
 if (window.location.pathname.endsWith('customer.html')) {
-    document.addEventListener('DOMContentLoaded', (event) => {
-        startQrCodeReader();
-    });
+    // ... (Your existing code)
 }
