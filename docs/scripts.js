@@ -54,4 +54,10 @@ let images = [];
 function updateBlackContainers() {
     const imageList = document.getElementById('imageList');
     imageList.innerHTML = ''; // Clear current containers
-    images.forEach((image, index) =>
+    images.forEach((image, index) => {
+        const container = document.createElement('div');
+        container.className = 'black-container';
+        container.onclick = () => window.location.href = `image-page-${index}.html`; // Navigate to unique URL
+
+        const img = document.createElement('img');
+        img.src = image.url;
