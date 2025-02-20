@@ -13,10 +13,11 @@ function navigateToCustomer() {
 
 function openAddImage() {
     document.getElementById('whiteContainer').style.display = 'block';
+    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 }
 
-async function uploadImage() {
-    const file = document.getElementById('fileInput').files[0];
+async function handleFileSelect(event) {
+    const file = event.target.files[0];
     if (file) {
         const formData = new FormData();
         formData.append('image', file);
@@ -32,8 +33,6 @@ async function uploadImage() {
         } else {
             alert('Failed to upload image.');
         }
-    } else {
-        alert('Please select a file.');
     }
 }
 
@@ -76,12 +75,21 @@ async function deleteImage(imageId) {
     await fetch(`/delete-image/${imageId}`, { method: 'DELETE' });
 }
 
-if (window.location.pathname.endsWith('editor.html')) {
-    fetchImages();
-}
+function startQrCodeReader() {
+    const video = document.getElementById('preview');
+    const canvasElement = document.createElement('canvas');
+    const canvas = canvasElement.getContext('2d');
+    let scanning = false;
 
-if (window.location.pathname.endsWith('customer.html')) {
-    document.addEventListener('DOMContentLoaded', (event) => {
-        startQrCodeReader();
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(function(stream) {
+        scanning = true;
+        video.setAttribute('playsinline', true); // required to tell iOS safari we don't want fullscreen
+        video.srcObject = stream;
+        video.play();
+        requestAnimationFrame(tick);
     });
-}
+
+    function tick() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvasElement.height = video.videoHeight;
+            canvasElement.width = video
