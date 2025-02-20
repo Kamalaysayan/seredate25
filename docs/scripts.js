@@ -1,8 +1,7 @@
 function navigateToEditor() {
     const password = prompt('Enter password:');
     if (password === 'Kamalaysayan@2025') {
-        document.querySelector('.container').style.display = 'none';
-        document.getElementById('editorContainer').style.display = 'block';
+        window.location.href = 'editor.html'; // Correct file path
     } else {
         alert('Incorrect password');
     }
@@ -10,6 +9,23 @@ function navigateToEditor() {
 
 function navigateToCustomer() {
     window.location.href = 'customer.html'; // Correct file path
+}
+
+function downloadImage() {
+    const link = document.createElement('a');
+    link.href = document.getElementById('customerImage').src;
+    link.download = 'customer-image.jpg';
+    link.click();
+}
+
+function generateQRCode() {
+    const url = window.location.href;
+    const qr = new QRious({
+        element: document.getElementById('qrCode'),
+        value: url,
+        size: 200
+    });
+    document.getElementById('qrCodeContainer').style.display = 'block';
 }
 
 function openAddImage() {
@@ -54,10 +70,4 @@ let images = [];
 function updateBlackContainers() {
     const imageList = document.getElementById('imageList');
     imageList.innerHTML = ''; // Clear current containers
-    images.forEach((image, index) => {
-        const container = document.createElement('div');
-        container.className = 'black-container';
-        container.onclick = () => window.location.href = `image-page-${index}.html`; // Navigate to unique URL
-
-        const img = document.createElement('img');
-        img.src = image.url;
+    images.forEach((image,
