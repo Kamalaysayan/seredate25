@@ -20,10 +20,12 @@ async function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
+
         reader.onload = function(e) {
             document.getElementById('uploadedImage').src = e.target.result;
             document.getElementById('uploadedImageContainer').style.display = 'block';
         }
+
         reader.readAsDataURL(file);
     }
 }
@@ -127,4 +129,28 @@ function startQrCodeReader() {
             canvasElement.height = video.videoHeight;
             canvasElement.width = video.videoWidth;
             canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-            const imageData = canvas.getImageData(0, 0, canvasElement.width,
+            const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: "dontInvert",
+            });
+            if (code) {
+                alert(`QR Code detected: ${code.data}`);
+                video.srcObject.getTracks().forEach(track => track.stop());
+                scanning = false;
+            }
+        }
+        if (scanning) {
+            requestAnimationFrame(tick);
+        }
+    }
+}
+
+if (window.location.pathname.endsWith('editor.html')) {
+    fetchImages();
+}
+
+if (window.location.pathname.endsWith('customer.html')) {
+    document.addEventListener('DOMContentLoaded', (event) => {
+        startQrCodeReader();
+    });
+}
