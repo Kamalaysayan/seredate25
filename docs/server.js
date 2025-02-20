@@ -84,21 +84,4 @@ app.post('/upload', upload.single('image'), (req, res) => {
 
 // API endpoint for fetching images
 app.get('/images', (req, res) => {
-    res.json(images);
-});
-
-// API endpoint for generating QR code
-app.get('/generate-qr', (req, res) => {
-    const url = req.query.url;
-    QRCode.toDataURL(url, (err, qrUrl) => {
-        if (err) {
-            res.status(500).send('Error generating QR code');
-        } else {
-            res.send({ qrUrl: qrUrl });
-        }
-    });
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+    res.json

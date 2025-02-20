@@ -1,16 +1,41 @@
-<script>
-    async function uploadImage() {
-        const file = document.getElementById('fileInput').files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('image', file);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image - KAMALAYSAYAN</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Image</h1>
+        <div id="imagePreviewContainer" class="white-container">
+            <img id="imagePreview" src="" width="100%">
+            <button class="button" onclick="uploadImage()">Upload</button>
+        </div>
+        <div id="uploadedImageContainer" style="display: none;">
+            <img id="uploadedImage" src="" width="100%">
+            <button class="button" onclick="markAsDone()">Done</button>
+        </div>
+    </div>
 
-            try {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const params = new URLSearchParams(window.location.search);
+            const imagePath = params.get('imagePath');
+            document.getElementById('imagePreview').src = imagePath;
+        });
+
+        async function uploadImage() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
                 const response = await fetch('/upload', {
                     method: 'POST',
                     body: formData
                 });
-
                 const result = await response.json();
                 if (response.ok) {
                     document.getElementById('uploadedImage').src = result.filePath;
@@ -18,16 +43,14 @@
                 } else {
                     alert('Failed to upload image.');
                 }
-            } catch (error) {
-                console.error('Error uploading image:', error);
-                alert('An error occurred while uploading the image.');
+            } else {
+                alert('Please select a file.');
             }
-        } else {
-            alert('Please select a file.');
         }
-    }
 
-    function markAsDone() {
-        window.location.href = 'editor.html';
-    }
-</script>
+        function markAsDone() {
+            window.location.href = 'editor.html';
+        }
+    </script>
+</body>
+</html>
