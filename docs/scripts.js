@@ -1,9 +1,14 @@
 async function navigateToEditor() {
-    // ... (Your existing password check)
+    const password = prompt('Enter password:');
+    if (password === 'Kamalaysayan@2025') {
+        window.location.href = 'editor.html';
+    } else {
+        alert('Incorrect password');
+    }
 }
 
 function navigateToCustomer() {
-    // ... (Your existing code)
+    window.location.href = 'customer.html';
 }
 
 function openAddImage() {
@@ -15,13 +20,11 @@ async function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
-
         reader.onload = function(e) {
             document.getElementById('uploadedImage').src = e.target.result;
             document.getElementById('uploadedImageContainer').style.display = 'block';
         }
-
-        reader.readAsDataURL(file); // Display image preview immediately
+        reader.readAsDataURL(file);
     }
 }
 
@@ -29,60 +32,76 @@ async function markAsDone() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
 
-    if(file){
-        const formData = new FormData();
-        formData.append('image', file);
+    if (!file) {
+        alert('Please select an image first.');
+        return;
+    }
 
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
         const response = await fetch('/upload', {
             method: 'POST',
             body: formData
         });
 
-        if (response.ok) {
-            document.getElementById('whiteContainer').style.display = 'none'; //hide the upload container again
-            document.getElementById('uploadedImageContainer').style.display = 'none'; //hide the image preview
-            document.getElementById('fileInput').value = ''; //clear the input
-            fetchImages(); // Refresh image list
-        } else {
-            alert('Failed to upload image.');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Upload failed: ${response.status} - ${errorData.message || response.statusText}`);
         }
-    } else {
-        alert('Please select an image first.');
+
+        document.getElementById('whiteContainer').style.display = 'none';
+        document.getElementById('uploadedImageContainer').style.display = 'none';
+        document.getElementById('fileInput').value = '';
+
+        await fetchImages(); // Refresh image list after successful upload
+
+    } catch (error) {
+        console.error("Error during upload:", error);
+        alert(error.message);
     }
 }
 
 async function fetchImages() {
-    const response = await fetch('/images');
-    const images = await response.json();
-    const imageList = document.getElementById('imageList');
-    imageList.innerHTML = ''; // Clear existing images
+    try {
+        const response = await fetch('/images');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch images: ${response.status}`);
+        }
+        const images = await response.json();
+        const imageList = document.getElementById('imageList');
+        imageList.innerHTML = '';
 
-    images.forEach(image => {
-        const container = document.createElement('div');
-        container.className = 'pink-container';
-        container.onclick = () => window.location.href = `image-page-${image.id}.html`;
+        images.forEach(image => {
+            const container = document.createElement('div');
+            container.className = 'pink-container';
+            container.onclick = () => window.location.href = `image-page-${image.id}.html`;
 
-        const img = document.createElement('img');
-        img.src = image.url;
-        img.alt = 'Uploaded Image';
+            const img = document.createElement('img');
+            img.src = image.url;
+            img.alt = 'Uploaded Image';
 
-        container.appendChild(img);
+            container.appendChild(img);
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-button';
-        deleteBtn.innerHTML = 'Delete';
-        deleteBtn.onclick = async (event) => {
-            event.stopPropagation();
-            await deleteImage(image.id);
-            container.remove();
-        };
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-button';
+            deleteBtn.innerHTML = 'Delete';
+            deleteBtn.onclick = async (event) => {
+                event.stopPropagation();
+                if (confirm("Are you sure you want to delete this image?")) {
+                    await deleteImage(image.id);
+                    container.remove();
+                }
+            };
 
-        container.appendChild(deleteBtn);
-
-        imageList.appendChild(container);
-    });
-
-    // imageList.insertBefore(document.getElementById('addImageContainer'), imageList.firstChild);
+            container.appendChild(deleteBtn);
+            imageList.appendChild(container);
+        });
+    } catch (error) {
+        console.error("Error fetching images:", error);
+        alert("Failed to load images. Please try again later.");
+    }
 }
 
 async function deleteImage(imageId) {
@@ -90,13 +109,22 @@ async function deleteImage(imageId) {
 }
 
 function startQrCodeReader() {
-    // ... (Your existing QR code reader code)
-}
+    const video = document.getElementById('preview');
+    const canvasElement = document.createElement('canvas');
+    const canvas = canvasElement.getContext('2d');
+    let scanning = false;
 
-if (window.location.pathname.endsWith('editor.html')) {
-    fetchImages(); // Call fetchImages when editor.html loads
-}
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(function(stream) {
+        scanning = true;
+        video.setAttribute('playsinline', true);
+        video.srcObject = stream;
+        video.play();
+        requestAnimationFrame(tick);
+    });
 
-if (window.location.pathname.endsWith('customer.html')) {
-    // ... (Your existing code)
-}
+    function tick() {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            canvasElement.height = video.videoHeight;
+            canvasElement.width = video.videoWidth;
+            canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+            const imageData = canvas.getImageData(0, 0, canvasElement.width,

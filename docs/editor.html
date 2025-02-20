@@ -6,25 +6,24 @@
     <title>Editor - KAMALAYSAYAN</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* ... (existing styles from your styles.css file) ... */
-        #whiteContainer {
+        .white-container {
             background-color: white;
             padding: 20px;
             border: 2px solid black;
             width: 80%;
             margin: 0 auto;
-            display: none; /* Initially hidden */
+            display: none;
         }
         #uploadedImage {
-            max-width: 100%; /* Image should not overflow container */
+            max-width: 100%;
             height: auto;
         }
 
         .image-list {
-            display: flex; /* Use flexbox for layout */
-            flex-wrap: wrap; /* Allow wrapping to new lines */
-            justify-content: center; /* Center the images */
-            gap: 10px; /* Space between images */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
         .pink-container {
             background-color: pink;
@@ -35,8 +34,8 @@
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            flex: 0 0 calc(33.33% - 20px); /* Adjust width for 3 images per row (example) */
-            box-sizing: border-box; /* Include padding/border in width */
+            flex: 0 0 calc(33.33% - 20px);
+            box-sizing: border-box;
         }
         .pink-container img {
             width: 100px;
@@ -48,7 +47,6 @@
             padding: 5px 10px;
             cursor: pointer;
         }
-
     </style>
 </head>
 <body>
@@ -65,7 +63,7 @@
         </div>
 
         <div id="imageList" class="image-list">
-            </div>
+        </div>
     </div>
     <script src="scripts.js"></script>
 </body>
