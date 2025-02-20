@@ -26,6 +26,13 @@
         .pink-container img {
             width: 100px;
         }
+        .delete-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -42,60 +49,12 @@
         </div>
         <div id="imageList" class="image-list">
             <!-- Dynamically generated image containers will go here -->
+            <div id="addImageContainer" class="pink-container">
+                <button class="button" onclick="openAddImage()">Add Image</button>
+            </div>
         </div>
     </div>
-
-    <script>
-        function openAddImage() {
-            document.getElementById('whiteContainer').style.display = 'block';
-        }
-
-        async function uploadImage() {
-            const file = document.getElementById('fileInput').files[0];
-            if (file) {
-                const formData = new FormData();
-                formData.append('image', file);
-
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    document.getElementById('uploadedImage').src = result.filePath;
-                    document.getElementById('uploadedImageContainer').style.display = 'block';
-                } else {
-                    alert('Failed to upload image.');
-                }
-            } else {
-                alert('Please select a file.');
-            }
-        }
-
-        function markAsDone() {
-            window.location.href = 'editor.html';
-        }
-
-        async function fetchImages() {
-            const response = await fetch('/images');
-            const images = await response.json();
-            const imageList = document.getElementById('imageList');
-            
-            images.forEach(image => {
-                const container = document.createElement('div');
-                container.className = 'pink-container';
-                container.onclick = () => window.location.href = `image-page-${image.id}.html`;
-
-                const img = document.createElement('img');
-                img.src = image.url;
-                img.alt = 'Uploaded Image';
-
-                container.appendChild(img);
-                imageList.appendChild(container);
-            });
-        }
-
-        fetchImages();
-    </script>
+    
+    <script src="scripts.js"></script>
 </body>
 </html>

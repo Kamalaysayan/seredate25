@@ -18,39 +18,6 @@
             <button class="button" onclick="markAsDone()">Done</button>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const params = new URLSearchParams(window.location.search);
-            const imagePath = params.get('imagePath');
-            document.getElementById('imagePreview').src = imagePath;
-        });
-
-        async function uploadImage() {
-            const file = document.getElementById('fileInput').files[0];
-            if (file) {
-                const formData = new FormData();
-                formData.append('image', file);
-
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    document.getElementById('uploadedImage').src = result.filePath;
-                    document.getElementById('uploadedImageContainer').style.display = 'block';
-                } else {
-                    alert('Failed to upload image.');
-                }
-            } else {
-                alert('Please select a file.');
-            }
-        }
-
-        function markAsDone() {
-            window.location.href = 'editor.html';
-        }
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>
